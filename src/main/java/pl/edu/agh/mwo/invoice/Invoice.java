@@ -1,6 +1,7 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import pl.edu.agh.mwo.invoice.product.Product;
@@ -8,23 +9,42 @@ import pl.edu.agh.mwo.invoice.product.Product;
 public class Invoice {
 	private Collection<Product> products;
 
+	public Invoice() {
+		this.products = new ArrayList<Product>();
+	}
+
 	public void addProduct(Product product) {
-		// TODO: implement
+		this.products.add(product);
 	}
 
 	public void addProduct(Product product, Integer quantity) {
-		// TODO: implement
+		if (quantity <= 0) {
+			throw new IllegalArgumentException();
+		}
+		for (int i = 0; i < quantity; i++) {
+			this.addProduct(product);
+		}
 	}
 
-	public BigDecimal getSubtotal() {
-		return null;
+	public BigDecimal getTotalNetValue() {
+		BigDecimal sum = BigDecimal.ZERO;
+		for (Product product : products) {
+			sum = sum.add(product.getPrice());
+		}
+		return sum;
 	}
 
 	public BigDecimal getTax() {
-		return null;
+		BigDecimal sum = BigDecimal.ZERO;
+		for (Product product : products) {
+			sum = sum.add(product.getPrice().multiply(product.getTaxPercent()));
+		}
+		return sum;
 	}
 
-	public BigDecimal getTotal() {
-		return null;
+	public BigDecimal getTotalGrossValue() {
+		BigDecimal sum = BigDecimal.ZERO;
+		sum = getTotalNetValue().add(getTax());
+		return sum;
 	}
 }
