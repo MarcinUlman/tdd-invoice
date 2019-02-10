@@ -20,21 +20,22 @@ public class InvoiceTest {
 	public void createEmptyInvoiceForTheTest() {
 		invoice = new Invoice();
 	}
-	
+
 	@Test
 	public void testTwoInvoicesHasDifferentNumber() {
 		Integer number = invoice.getInvoiceNumber();
 		Integer number2 = new Invoice().getInvoiceNumber();
 		Assert.assertNotEquals(number, number2);
 	}
-	
+
 	@Test
-	public void testInvoicHasSameNumber() {
+	public void testInvoiceHasSameNumber() {
 		Integer number = invoice.getInvoiceNumber();
-		Integer number2 =  invoice.getInvoiceNumber();;
+		Integer number2 = invoice.getInvoiceNumber();
+		;
 		Assert.assertEquals(number, number2);
 	}
-	
+
 	@Test
 	public void testInvoiceNumberIsIncrementing() {
 		for (int i = 0; i < 100; i++) {
@@ -43,10 +44,44 @@ public class InvoiceTest {
 			Assert.assertThat(number, Matchers.lessThan(number2));
 		}
 	}
+
+	@Test
+	public void testPrinterContainNumber() {
+		String printInvoice = invoice.getAsText();
+		String number = invoice.getInvoiceNumber().toString();
+		Assert.assertThat(printInvoice, Matchers.containsString("nr: " + number));
+	}
+
+	@Test
+	public void testPrinterInvoiceConstainsProduct() {
+		invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5.3")), 2);
+		String printInvoice = invoice.getAsText();
+		Assert.assertThat(printInvoice, Matchers.containsString("Kubek 5.3 2"));
+	}
+
+	@Test
+	public void testPrinterInvoiceListOfProducts() {
+		invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5.3")), 2);
+		invoice.addProduct(new TaxFreeProduct("Zupa", new BigDecimal("12.7")), 8);
+		String printInvoice = invoice.getAsText();
+		Assert.assertThat(printInvoice, Matchers.containsString("Kubek 5.3 2\nZupa 12.7 8"));
+	}
+
+	@Test
+	public void testPrinterInvoiceNumberOfProducts() {
+		invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5.3")), 2);
+		invoice.addProduct(new TaxFreeProduct("Zupa", new BigDecimal("12.7")), 8);
+		invoice.addProduct(new TaxFreeProduct("Malpa", new BigDecimal("15.5")), 1);
+		String printInvoice = invoice.getAsText();
+		Assert.assertThat(printInvoice, Matchers.containsString("Liczba pozycji: 3"));
+	}
 	
-	
-	
-	
+	@Test
+	public void testAddingTheSameProductTwice() {
+		invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5.3")), 2);
+		invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5.3")), 2);
+		Assert.assertThat(invoice.getAsText(), Matchers.containsString("Kubek 5.3 4"));
+	}
 
 	@Test
 	public void testEmptyInvoiceHasEmptySubtotal() {
