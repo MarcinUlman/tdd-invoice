@@ -8,7 +8,17 @@ import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
 	private Map<Product, Integer> products = new HashMap<Product, Integer>();
-
+	private Integer number;
+	private static Integer nextNumber = 1; 
+	
+	public Invoice() {
+		this.number = nextNumber++;
+	}
+	
+	public Integer getInvoiceNumber() {
+		return number;
+	}
+	
 	public void addProduct(Product product) {
 		addProduct(product, 1);
 	}
