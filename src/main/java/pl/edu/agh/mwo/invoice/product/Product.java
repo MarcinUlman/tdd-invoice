@@ -32,7 +32,12 @@ public abstract class Product {
 	}
 
 	public BigDecimal getPriceWithTax() {
-		return price.multiply(taxPercent).add(price);
+		BigDecimal priceWithTax = price.multiply(taxPercent).add(price);
+		if (this instanceof HasExcise) {
+			HasExcise productWithExcice = (HasExcise) this;
+			return priceWithTax.add(productWithExcice.getExcise());
+		}
+		return priceWithTax;
 	}
 
 	@Override

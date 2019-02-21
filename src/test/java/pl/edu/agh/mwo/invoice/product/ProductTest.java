@@ -2,6 +2,7 @@ package pl.edu.agh.mwo.invoice.product;
 
 import java.math.BigDecimal;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,4 +55,35 @@ public class ProductTest {
 	public void testProductWithNegativePrice() {
 		new TaxFreeProduct("Mandarynki", new BigDecimal("-1.00"));
 	}
+
+	@Test
+	public void testBottleOfWine() {
+		HasExcise szampan = new BottleOfWine("Szampan", new BigDecimal("15"));
+		BigDecimal expectetExceise = new BigDecimal("5.56");
+		Assert.assertThat(expectetExceise, Matchers.equalTo(szampan.getExcise()));
+		// invoice.addProduct(new BottleOfWine("Szampan", new BigDecimal(15)), 1);
+//		Assert.assertThat(new BigDecimal("24.01"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+	}
+
+	@Test
+	public void testFuelCanister() {
+		HasExcise benzynka = new FuelCanister("95", new BigDecimal("5.2"));
+		BigDecimal expectetExceise = new BigDecimal("5.56");
+		Assert.assertThat(expectetExceise, Matchers.comparesEqualTo(benzynka.getExcise()));
+	}
+
+	@Test
+	public void testButtleOfWinePriceWithTax() {
+		BigDecimal expextetPriceWithTax = new BigDecimal("128.56");
+		Product wine = new BottleOfWine("wino", new BigDecimal("100"));
+		Assert.assertThat(expextetPriceWithTax, Matchers.comparesEqualTo(wine.getPriceWithTax()));
+	}
+	
+	@Test
+	public void testFuelCanisterPriceWithTax() {
+		BigDecimal expectedPriceWithTax = new BigDecimal("105.56");
+		Product gasoline = new FuelCanister("95", new BigDecimal("100"));
+		Assert.assertThat(expectedPriceWithTax, Matchers.comparesEqualTo(gasoline.getPriceWithTax()));
+	}
+
 }
